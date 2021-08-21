@@ -4,10 +4,10 @@ import org.reutils.annotations.Group;
 
 public class DummyClassGroupsSpecified {
 
-    @Group(group = "v1")
+    @Group("v1")
     String value1;
 
-    @Group(group = "test")
+    @Group("test")
     private String value2;
 
     @Group
