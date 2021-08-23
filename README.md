@@ -14,14 +14,6 @@ import java.util.regex.Pattern;
 
 public class Jdk {
 
-    import org.reutils.annotations.Group;
-import org.reutils.core.build.builders.RegexBuilder;
-
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-    public class Jdk {
-
         public static class Version {
 
             // Use "toInt" for all fields (specified by builder)
