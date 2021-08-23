@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Group {
     String value() default "";
     boolean optional() default false;
+    String function() default "";
 }

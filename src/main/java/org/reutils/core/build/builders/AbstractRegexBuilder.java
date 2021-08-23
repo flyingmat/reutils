@@ -14,8 +14,15 @@ public abstract class AbstractRegexBuilder implements RegexBuilder {
 
     protected final Map<String, Function<String, ?>> mappings = new HashMap<>();
 
+    protected final Map<String, Function<String, ?>> functions = new HashMap<>();
+
     public AbstractRegexBuilder map(final String group, final Function<String, ?> mapping) {
         mappings.put(group, mapping);
+        return this;
+    }
+
+    public AbstractRegexBuilder with(final String functionName, final Function<String,?> function) {
+        functions.put(functionName, function);
         return this;
     }
 
@@ -43,8 +50,18 @@ public abstract class AbstractRegexBuilder implements RegexBuilder {
                     if (group == null && !groupAnnotation.optional()) {
                         throw new BuildException("Group '" + groupName + "' did not match any input for non-optional field '" + field.getName() + "'.");
                     }
+
                     field.setAccessible(true);
-                    field.set(object, mappings.containsKey(groupName) ? mappings.get(groupName).apply(group) : group);
+                    final String function = groupAnnotation.function();
+                    if (!function.isEmpty()) {
+                        if (!functions.containsKey(function)) {
+                            throw new BuildException("Function '" + function + "' not specified for field '" + field.getName() + "'");
+                        } else {
+                            field.set(object, functions.get(function).apply(group));
+                        }
+                    } else {
+                        field.set(object, mappings.containsKey(groupName) ? mappings.get(groupName).apply(group) : group);
+                    }
                 } catch (final IllegalAccessException | IllegalArgumentException e) {
                     throw new BuildException("Unable to set field '" + field.getName() + "'.", e);
                 }

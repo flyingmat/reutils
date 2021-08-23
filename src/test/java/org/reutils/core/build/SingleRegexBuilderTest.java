@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.reutils.core.build.builders.RegexBuilder;
 import org.reutils.core.build.builders.SingleRegexBuilder;
 import org.reutils.core.build.dummies.*;
 import org.reutils.core.build.exceptions.BuildException;
@@ -126,6 +127,19 @@ class SingleRegexBuilderTest {
                         Pattern.compile("^not a (?<string>.+): (?<mapthis>\\d{4}-\\d{2}-\\d{2})$")
                 )
         );
+    }
+
+    @Test
+    public void buildFunctionSuccess() {
+        final String input = "not a string: 123";
+        final Pattern pattern = Pattern.compile("^not a (?<string>.+): (?<mapthis>\\d+)$");
+
+        final Optional<DummyClassFunctionInteger> result = new SingleRegexBuilder(pattern).with("toInt", Integer::parseInt)
+                .build(input, DummyClassFunctionInteger.class);
+
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get()).hasFieldOrPropertyWithValue("string", "string");
+        assertThat(result.get()).hasFieldOrPropertyWithValue("mapthis", 123);
     }
 
 }
